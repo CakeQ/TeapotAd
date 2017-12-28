@@ -12,6 +12,6 @@ layout (location = 0) out vec4 FragColour;
 
 void main()
 {
-   vec3 refractionVector = refract(normalize(vertPos - cameraPos), normalize(N), 1);
+   vec3 refractionVector = refract(normalize(vertPos - cameraPos), normalize(N), 0.5);
    FragColour = texture(cubemap, refractionVector);
 }
