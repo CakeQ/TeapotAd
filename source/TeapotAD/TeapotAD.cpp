@@ -120,6 +120,12 @@ void update( float t )
 		camera.roll(deltaX*ROTATE_VELOCITY);
 		
 	}
+
+	//Swap between reflection and refraction shaders.
+	if (glfwGetKey(window, GLFW_KEY_SPACE))
+	{
+		scene->swapReflection();
+	}
 		
 	//Store the current cursor position
 	lastCursorPositionX = cursorPositionX;

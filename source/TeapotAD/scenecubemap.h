@@ -28,53 +28,34 @@ namespace imat3111
 	{
 	private:
 
-		VBOCube *skyboxCube;
-		GLSLProgram SkyShader;
-
-		VBOTeapot *teapot1;
-		//VBOTeapot *teapot2;
-
-		GLSLProgram Teapot1Shader;
-		//GLSLProgram Teapot2Shader;
-
-		int width, height;
-
-		mat4 model; //Model matrix
-
-		Texture* gTexture;
-		GLuint programHandle;
-
-		void setMatrices(QuatCamera camera, GLSLProgram* Shader); //Set the camera matrices
-
-		void compileAndLinkShader(); //Compile and link the shader
+		VBOCube *skyboxCube;										//Cube Map object.
+		GLSLProgram SkyShader;										//Shader used for cube map.
+		VBOTeapot *teapot;											//Teapot object.
+		GLSLProgram Teapot1Shader;									//Reflection shader for teapot.
+		GLSLProgram Teapot2Shader;									//Refraction shader for teapot.
+		static bool UsingReflection;								//Boolean for using reflection or refraction.
+		int width, height;											//Camera sizes.
+		mat4 model;													//Model matrix.
+		void setMatrices(QuatCamera camera, GLSLProgram* Shader);	//Set the camera matrices.
+		void compileAndLinkShader();								//Compile and link the shader.
 
 	public:
-		static bool reflection;
-
-		SceneCubeMap() {};
-
-		void setLightParams(QuatCamera camera); //Setup the lighting
-
-		void initScene(QuatCamera camera); //Initialise the scene
-
-		void update(float t) {}; //Update the scene
-
-		void render(QuatCamera camera);	//Render the scene
-
-		void resize(QuatCamera camera, int w, int h); //Resize
-
-		void swapReflection()
+		SceneCubeMap() { UsingReflection = true; };					//Initialise boolean.
+		void setLightParams(QuatCamera camera);						//Setup the lighting.
+		void initScene(QuatCamera camera);							//Initialise the scene.
+		void update(float t) {};									//Update the scene.
+		void render(QuatCamera camera);								//Render the scene.
+		void resize(QuatCamera camera, int w, int h);				//Resize the camera.
+		void swapReflection()										//Swap between reflection and refraction.
 		{
-			if (reflection)
+			if (UsingReflection)
 			{
-				reflection = false;
+				UsingReflection = false;
 			}
 			else
 			{
-				reflection = true;
+				UsingReflection = true;
 			}
-
-			compileAndLinkShader();
 		};
 	};
 }

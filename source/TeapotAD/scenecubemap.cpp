@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "scenecubemap.h"
 
+bool imat3111::SceneCubeMap::UsingReflection;
+
 void imat3111::SceneCubeMap::setMatrices(QuatCamera camera, GLSLProgram * Shader)
 {
 	mat4 mv = camera.view() * model;
@@ -25,7 +27,6 @@ void imat3111::SceneCubeMap::compileAndLinkShader()
 		std::cerr << e.what() << std::endl;
 		exit(EXIT_FAILURE);
 	}
-
 	try {
 		Teapot1Shader.compileShader("Shaders/Teapot.vert");
 		Teapot1Shader.compileShader("Shaders/reflection.frag");
@@ -36,19 +37,18 @@ void imat3111::SceneCubeMap::compileAndLinkShader()
 		std::cerr << e.what() << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	/*
+
 	try {
 		Teapot2Shader.compileShader("Shaders/Teapot.vert");
 		Teapot2Shader.compileShader("Shaders/refraction.frag");
 		Teapot2Shader.link();
 		Teapot2Shader.validate();
 	}
-
 	catch (GLSLProgramException & e) {
 		std::cerr << e.what() << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	*/
+	
 }
 
 void imat3111::SceneCubeMap::initScene(QuatCamera camera)
@@ -60,8 +60,7 @@ void imat3111::SceneCubeMap::initScene(QuatCamera camera)
 
 	glm::mat4 lid = glm::mat4(1.0);
 
-	teapot1 = new VBOTeapot(16, lid);
-	//teapot2 = new VBOTeapot(16, lid);
+	teapot = new VBOTeapot(16, lid);
 
 	skyboxCube = new VBOCube(50.0f);
 }
@@ -80,15 +79,19 @@ void imat3111::SceneCubeMap::render(QuatCamera camera)
 	setMatrices(camera, &SkyShader);
 	skyboxCube->render();
 
-	Teapot1Shader.use();
-	model = mat4(1.0f);
-	setMatrices(camera, &Teapot1Shader);
-	teapot1->render();
-
-	//Teapot2Shader.use();
-	//model = mat4(1.0f);
-	//setMatrices(camera, &Teapot2Shader);
-	//teapot2->render();
+	if (UsingReflection)
+	{
+		Teapot1Shader.use();
+		model = mat4(1.0f);
+		setMatrices(camera, &Teapot1Shader);
+	}
+	else
+	{
+		Teapot2Shader.use();
+		model = mat4(1.0f);
+		setMatrices(camera, &Teapot2Shader);
+	}
+	teapot->render();
 }
 
 void imat3111::SceneCubeMap::resize(QuatCamera camera, int w, int h)
